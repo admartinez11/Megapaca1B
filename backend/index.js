@@ -1,0 +1,9 @@
+import app from "./app.js";
+
+//Creo una función q se encarga de ejecutar el servidor
+async function main() {
+    app.listen(4000)
+    console.log("server on port 400")
+}
+
+main();
