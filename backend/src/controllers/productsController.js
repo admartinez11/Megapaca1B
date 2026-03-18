@@ -2,7 +2,7 @@
 const productsController = {};
 
 //Import el Schema de la colección que vamos a utilizar
-import productsModel from "../models/products";
+import productsModel from "../models/products.js";
 
 //SELECT
 productsController.getProducts = async (req, res) =>{
@@ -41,3 +41,5 @@ productsController.updateProducts = async(req, res) => {
 
     res.json({message: "product updated"})
 };
+
+export default productsController

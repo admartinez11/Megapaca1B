@@ -9,7 +9,7 @@ Campos
 import {Schema, model} from "mongoose";
  
 const productSchema = new Schema({
-    nombre: {
+    name: {
         type: String,
     required: true
     },
@@ -24,9 +24,9 @@ const productSchema = new Schema({
         type: Number,
        
     }
-},{
+}, {
     timestamps: true,
     strict: false
-});    
+})
  
 export default model("products", productSchema)

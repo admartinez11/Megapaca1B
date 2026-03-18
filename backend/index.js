@@ -1,4 +1,5 @@
 import app from "./app.js";
+import "./database.js"
 
 //Creo una función q se encarga de ejecutar el servidor
 async function main() {
