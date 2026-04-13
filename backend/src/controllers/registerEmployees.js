@@ -3,55 +3,59 @@ import crypto from "crypto"; //generar codigo aleatorio
 import jsonwebtoken  from "jsonwebtoken"; //token
 import bcryptjs from "bcryptjs"; //encriptar
 
-import customerModel from "../models/customers.js";
+import employeeModel from "../models/employees.js";
 
 import { config } from "../../config.js";
 
 //array de funciones
-const registerCustomerController = {};
+const registerEmployeeController = {};
 
-registerCustomerController.register = async (req, res) => {
+registerEmployeeController.register = async (req, res) => {
     //#1 Solicitar datos
     const{
         name,
         lastName,
-        birthdate,
+        salary,
+        DUI,
+        phone,
         email,
         password,
+        idBranches,
         isVerified
-    } = req.body;
+    }= req.body;
 
     try{
         //validar que el correo no exista
-        const existingCustomer = await customerModel.findOne({ email });
-        if(existingCustomer){
-            return res.status(400).json({ message: "Customer already exists" });
+        const existingEmployee = await employeeModel.findOne({ email });
+        if(existingEmployee){
+            return res.status(400).json({ message: "Employee already exists" });
         }
 
         //encriptar contraseña
         const passwordHashed = await bcryptjs.hash(password, 10);
 
         //generar codigo aleatorio
-        const randomNumber = crypto.randomBytes(3).toString("hex")
-
+        const randomNumber = crypto.randomBytes(3).toString("hex")   
+        
         //Guardamos en un token la info
         const token = jsonwebtoken.sign(
-            //#1 q vamos a guardar
+            //#1 lo que vamos a guardar 
             {
-                randomNumber, 
-                name, 
-                lastName, 
-                birthdate, 
-                email, 
-                password: passwordHashed, 
+                name,
+                lastName,
+                salary,
+                DUI,
+                phone,
+                email,
+                password: passwordHashed,
+                idBranches,
                 isVerified
             },
             //#2 secret key 
             config.JWT.SECRET,
             //#3 cuando expira
-            { expiresIn: "15min"}
+            { expiresIn: "15min"}            
         );
-
 
 
         res.cookie("RegistrationCookie", token, {maxAge: 15 * 60 * 1000});
@@ -81,7 +85,7 @@ registerCustomerController.register = async (req, res) => {
                 return res.status(500).json({message: "Error sending email"})
             }
             return res.status(200).json({message: "Email sent"})
-        })
+        })      
 
     }catch(error){
         console.log("error" + error)
@@ -90,7 +94,7 @@ registerCustomerController.register = async (req, res) => {
 };
 
 //verificar el código que acabamos de enviar
-registerCustomerController.verifyCode = async (req, res) => {
+registerEmployeeController.verifyCode = async (req, res) => {
     try{
         //solicitamos el código
         const {verificationCodeRequest} = req.body;
@@ -102,12 +106,15 @@ registerCustomerController.verifyCode = async (req, res) => {
         const decoded = jsonwebtoken.verify(token, config.JWT.SECRET);
         const {
             randomNumber: storedCode, 
-            name, 
-            lastName, 
-            birthdate, 
-            email, 
-            password, 
-            isVerified
+            name,
+            lastName,
+            salary,
+            DUI,
+            phone,
+            email,
+            password,
+            idBranches,
+            isVerified,
         } = decoded;
 
         //comparar lo que el usuario escribió con el código del token
@@ -116,20 +123,23 @@ registerCustomerController.verifyCode = async (req, res) => {
         }
 
         //si todo está bien, y el usuario escribe el código, lo registramos en la BD
-        const NewCustomer = new customerModel({
+        const NewEmployee = new employeeModel({
             name,
             lastName,
-            birthdate,
+            salary,
+            DUI,
+            phone,
             email,
             password,
+            idBranches,
             isVerified: true
         });
 
-        await NewCustomer.save();
+        await NewEmployee.save();
 
         res.clearCookie("registrationCookie");
 
-        return res.status(200).json({message: "Customer registered"})
+        return res.status(200).json({message: "Employee registered"})
 
     } catch(error){
         console.log("error" + error)
@@ -137,5 +147,4 @@ registerCustomerController.verifyCode = async (req, res) => {
     }
 };
 
-export default registerCustomerController;  
-
+export default registerEmployeeController;  

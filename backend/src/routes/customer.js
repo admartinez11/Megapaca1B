@@ -2,7 +2,7 @@ import express from "express"
 import customerController from "../controllers/customerController.js"
 
 //usamos Router() de la librería express para definir los métodos HTTP a utilizar
-const router = express.Route();
+const router = express.Router();
 
 router.route("/")
     .get(customerController.getCustomer);

@@ -11,7 +11,7 @@ employeesController.getEmployee = async (req, res) => {
 };
 
 //INSERT
-employeesController.insertEmployee = async (req, res) => {
+/*employeesController.insertEmployee = async (req, res) => {
     //1. Solicito los datos a guardar
     const { name, lastName, salary, DUI, phone, email, password, idBranches } = req.body;
 
@@ -32,7 +32,7 @@ employeesController.insertEmployee = async (req, res) => {
 
     //4. Devuelvo la respuesta
     res.json({message: "Employee saved"});
-};
+};*/
 
 //DELETE
 employeesController.deleteEmployee = async (req, res) => {
