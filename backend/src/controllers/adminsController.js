@@ -38,7 +38,7 @@ adminsController.deleteAdmin = async (req, res) => {
 }
 
 //UPDATE
-adminsController.updateEmployee = async (req,res) => {
+adminsController.updateAdmin = async (req,res) => {
 
     //1. Solicito los datos a guardar
    const { name, email, password, isVerified } = req.body;

@@ -6,7 +6,7 @@ import adminsController from "../controllers/adminsController.js"
 const router = express.Router();
 
 router.route("/")
-.get(adminsController.getAdmins);
+.get(adminsController.getAdmin);
 
 router.route("/:id")
 .put(adminsController.updateAdmin)
