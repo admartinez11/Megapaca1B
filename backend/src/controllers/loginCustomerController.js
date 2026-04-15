@@ -39,12 +39,20 @@ loginCustomersController.login = async (req, res) => {
         
         if(!isMatch){
             customerFound.loginAttemps = (customerFound.loginAttemps || 0) + 1;
-            customerFound.timeOut = Date.now() + 5 * 60 * 1000;
-            customerFound.loginAttemps = 0;
+
+            //si llega a 5 intentos fallidos se bloquea la cuenta
+            if (customerFound.loginAttemps >= 5){
+                customerFound.timeOut = Date.now() + 5 * 60 * 1000;
+                customerFound.loginAttemps = 0;
+
+                await customerFound.save();
+
+                return res.status(403).json({message: "Cuenta bloqueada por multiples intentos fallidos"})
+            }
 
             await customerFound.save();
-
-            return res.status(403).json({message: "Cuenta bloqueada por multiples intentos"})
+            
+            return res.status(403).json({message: "Credenciales incorrectas"})
         }
 
         //Resetear intentos si login correcto
