@@ -105,45 +105,42 @@ recoveryPasswordController.verifyCode = async (req, res) => {
 };
 
 recoveryPasswordController.newPassword = async (req, res) => {
-    try{
-        //#1 solicitamos los datos
-        const { newPassword, confirmNewPassword } = req.body;
-
-        //comparo las 2 contraseñas
-        if (newPassword !== confirmNewPassword) {
-            return res.status(400).json({ message: "Password doesn't match" });
-        }
-
-        //vamos a comprobar que la constante verified que está en el token ya esté en true (o sea q haya pasado por el paso 2)
-        const token = req.cookies.recoveryCokkie;
-
-        if(!token){
-            return res.status(400).json({message: "No token provided"})
-        }
-
-        const decoded = jsonwebtoken.verify(token, config.JWT.SECRET);
-
-        if(!decoded.verified){
-            return res.status(400).json({message: "code not verified"})
-        }
-
-        //ENCRIPTAR
-        const passwordHash = await bcrypt.hash (newPassword, 19)
-
-        //actualizamos la contra en la BD
-        await customerModel.findOneAndUpdate(
-            {email: decoded.email},
-            {password: passwordHash}
-        );
-
-        res.clearCookie("recovery Cookie")
-
-        return res.status(200).json({message: "Password updated"})
-
-    }catch(error){
-        console.log("error" + error);
-        return res.status(500).json({message: "Internal serve error"});
+  try {
+    //#-1 Solicito los datos
+    const { newPassword, confirmNewPassword } = req.body;
+ 
+    //Comparo las dos contraseñas
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ message: "password doesnt match" });
     }
+ 
+    //vamos comprobar que la constante verified que está en el token
+    //ya esté en true (o sea que haya pasado por el paso 2)
+    const token = req.cookies.recoveryCokkie;
+    const decoded = jsonwebtoken.verify(token, config.JWT.SECRET);
+ 
+    if (!decoded.verified) {
+      return res.status(400).json({ message: "Code not verified" });
+    }
+ 
+    /////////
+    //Encriptar
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+ 
+    //Actualizamos la contraseña en la base de datos
+    await customerModel.findOneAndUpdate(
+      { email: decoded.email },
+      { password: passwordHash },
+      { new: true },
+    );
+ 
+    res.clearCookie("recoveryCookie");
+ 
+    return res.status(200).json({ message: "Password updated" });
+  } catch (error) {
+    console.log("error" + error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export default recoveryPasswordController;
