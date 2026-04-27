@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser";
 import loginCustomerRoutes from "./src/routes/login.js"
 import logoutRoutes from "./src/routes/logout.js"
 import cors from "cors";
+import recoveryPasswordRoutes from "./src/routes/recoveryPassword.js";
 
 //creo una constante que guarde Express
 const app = express();
@@ -40,5 +41,6 @@ app.use ("/api/registerEmployee", registerEmployeeRoutes);
 app.use ("/api/registerAdmin", registerAdminRoutes);
 app.use("/api/login", loginCustomerRoutes);
 app.use("/api/logout", logoutRoutes);
+app.use("/api/recoveryPassword", recoveryPasswordRoutes);
 
 export default app; 
